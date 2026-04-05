@@ -1,0 +1,57 @@
+spring:
+    application:
+        name: finance-backend
+
+    datasource:
+        url: jdbc:mysql://localhost:3306/finance_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+        username: root
+        password: root
+        driver-class-name: com.mysql.cj.jdbc.Driver
+
+    security:
+        user:
+            name: disabled
+            password: disabled
+
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: false
+        properties:
+            hibernate:
+                "[format_sql]": true
+                dialect: org.hibernate.dialect.MySQLDialect
+        database-platform: org.hibernate.dialect.MySQLDialect
+
+server:
+    port: 8080
+
+jwt:
+    secret: ${JWT_SECRET:finance-backend-secret-key-change-in-production-minimum-256-bits-required-for-hs256}
+    expiration: 86400000 # 24 hours in milliseconds
+
+logging:
+    level:
+        root: INFO
+        "[com.finance.backend]": INFO
+        "[org.springframework.security]": INFO
+        "[org.hibernate.SQL]": DEBUG
+        "[org.hibernate.type.descriptor.sql.BasicBinder]": TRACE
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: health,info
+    endpoint:
+        health:
+            show-details: when-authorized
+
+springdoc:
+    api-docs:
+        path: /v3/api-docs
+    swagger-ui:
+        path: /swagger-ui.html
+        enabled: true
+        operations-sorter: method
+        tags-sorter: alpha
