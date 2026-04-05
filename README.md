@@ -24,7 +24,8 @@ This backend system provides comprehensive financial data management with three 
 - **Spring Boot 3.2.4**: Production-ready application framework
 - **Spring Security**: Authentication and authorization
 - **Spring Data JPA**: Data persistence abstraction
-- **H2 Database**: In-memory database for development
+- **MySQL 8.0+**: Production database
+- **H2 Database**: In-memory database for development/testing
 - **JWT (jjwt 0.12.5)**: Token-based authentication
 - **Lombok**: Reduce boilerplate code
 - **SpringDoc OpenAPI**: API documentation
@@ -34,6 +35,7 @@ This backend system provides comprehensive financial data management with three 
 
 - Java 17 or higher
 - Maven 3.8+ or higher
+- MySQL 8.0+ (for production) or H2 (for development)
 - Git (for cloning the repository)
 
 ## Getting Started
@@ -59,11 +61,49 @@ mvn spring-boot:run
 
 The application will start on `http://localhost:8080`
 
-### 4. Access the API Documentation
+### 4. Configure Database
+
+#### Option A: MySQL (Production)
+
+1. Create MySQL database:
+```sql
+CREATE DATABASE finance_db;
+CREATE USER 'finance_user'@'localhost' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON finance_db.* TO 'finance_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+2. Update `application.yml` or set environment variables:
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/finance_db
+    username: finance_user
+    password: your_password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+```
+
+Or use environment variables:
+```bash
+export SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/finance_db
+export SPRING_DATASOURCE_USERNAME=finance_user
+export SPRING_DATASOURCE_PASSWORD=your_password
+```
+
+#### Option B: H2 (Development/Testing)
+
+No configuration needed. H2 runs in-memory by default.
+
+### 5. Access the API Documentation
 
 Open your browser and navigate to:
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
-- H2 Console: `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:mem:financedb`)
+- H2 Console (dev only): `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:mem:financedb`)
 
 ## Default Test Users
 
@@ -71,9 +111,9 @@ The application comes with three pre-configured test users:
 
 | Username | Password | Role | Email |
 |----------|----------|------|-------|
-| viewer_user | password123 | VIEWER | viewer@example.com |
-| analyst_user | password123 | ANALYST | analyst@example.com |
-| admin_user | password123 | ADMIN | admin@example.com |
+| viewer | viewer | VIEWER | viewer@example.com |
+| analyst | analyst | ANALYST | analyst@example.com |
+| admin | admin | ADMIN | admin@example.com |
 
 ## API Endpoints
 
@@ -262,19 +302,75 @@ For detailed information about role permissions and access control implementatio
 
 ## Configuration
 
+### Database Configuration
+
+#### MySQL (Production)
+
+Create `application-prod.yml`:
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/finance_db?useSSL=false&serverTimezone=UTC
+    username: finance_user
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    show-sql: false
+```
+
+Run with production profile:
+```bash
+export DB_PASSWORD=your_secure_password
+mvn spring-boot:run -Dspring-boot.run.profiles=prod
+```
+
+#### H2 (Development)
+
+Default configuration in `application-dev.yml`:
+```yaml
+spring:
+  datasource:
+    url: jdbc:h2:mem:financedb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+```
+
 ### Environment Variables
 
 You can override default configuration using environment variables:
 
 ```bash
+# Database
+export SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/finance_db
+export SPRING_DATASOURCE_USERNAME=finance_user
+export SPRING_DATASOURCE_PASSWORD=your_password
+
+# JWT
 export JWT_SECRET=your-secret-key-minimum-256-bits
-export SPRING_PROFILES_ACTIVE=dev
+
+# Profile
+export SPRING_PROFILES_ACTIVE=prod
 ```
 
 ### Application Profiles
 
 - **dev**: Development profile with H2 database and debug logging
-- **prod**: Production profile (configure PostgreSQL/MySQL in application-prod.yml)
+- **prod**: Production profile with MySQL database
 
 ## Testing
 
@@ -329,8 +425,8 @@ finance-backend/
 - **Rationale**: Preserves data for audit trails and allows recovery
 
 ### 3. H2 Database
-- **Decision**: Use H2 for development, support PostgreSQL/MySQL for production
-- **Rationale**: Simplifies local development while maintaining production flexibility
+- **Decision**: Use H2 for development, MySQL for production
+- **Rationale**: Simplifies local development while maintaining production reliability with MySQL
 
 ### 4. Role-Based Access Control
 - **Decision**: Three roles with clear permission boundaries
@@ -384,6 +480,18 @@ The API returns consistent error responses:
 
 ## Troubleshooting
 
+### MySQL Connection Issues
+```bash
+# Check MySQL is running
+sudo systemctl status mysql
+
+# Test connection
+mysql -u finance_user -p finance_db
+
+# Check MySQL version (requires 8.0+)
+mysql --version
+```
+
 ### Port Already in Use
 ```bash
 # Change port in application.yml or use environment variable
@@ -399,6 +507,16 @@ mvn spring-boot:run
 - Ensure dev profile is active
 - Check URL: `http://localhost:8080/h2-console`
 - JDBC URL: `jdbc:h2:mem:financedb`
+
+### Database Schema Issues
+```bash
+# For MySQL, reset database
+mysql -u finance_user -p
+DROP DATABASE finance_db;
+CREATE DATABASE finance_db;
+
+# Restart application with ddl-auto: create
+```
 
 ## Future Enhancements
 
