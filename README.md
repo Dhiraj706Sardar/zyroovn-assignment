@@ -1,13 +1,18 @@
-# Finance Backend API
+# Finance Management System
 
-A RESTful API for managing financial records with role-based access control, built with Java 17 and Spring Boot 3.
+A full-stack financial management application with role-based access control, built with Spring Boot (Backend) and React (Frontend).
+
+## 📺 Video Demo
+
+Watch the complete walkthrough and demo: [Finance Management System Demo](https://youtu.be/DDgrrdHwMNc)
 
 ## Overview
 
-This backend system provides comprehensive financial data management with three user roles (Viewer, Analyst, Admin), JWT-based authentication, and dashboard analytics. The application demonstrates clean architecture, proper data modeling, comprehensive validation, and role-based access control.
+This system provides comprehensive financial data management with three user roles (Viewer, Analyst, Admin), JWT-based authentication, and interactive dashboard analytics. The application demonstrates clean architecture, proper data modeling, comprehensive validation, and modern UI/UX design.
 
 ## Features
 
+### Backend Features
 - **User Management**: Create and manage users with different roles and statuses
 - **Role-Based Access Control**: Three roles with distinct permissions (VIEWER, ANALYST, ADMIN)
 - **Financial Record Management**: CRUD operations for income and expense tracking
@@ -18,8 +23,19 @@ This backend system provides comprehensive financial data management with three 
 - **Soft Delete**: Preserve data integrity with soft delete functionality
 - **Comprehensive Validation**: Input validation with detailed error messages
 
+### Frontend Features
+- **Modern React UI**: Built with React 18 and Vite for fast development
+- **Responsive Design**: Mobile-first design that works on all devices
+- **Interactive Dashboard**: Real-time charts and visualizations using Recharts
+- **Secure Authentication**: JWT-based login with protected routes
+- **Role-Based UI**: Dynamic UI based on user permissions
+- **Form Validation**: Client-side validation with user-friendly error messages
+- **State Management**: Efficient state management with React Context
+- **API Integration**: Seamless integration with backend REST API
+
 ## Technology Stack
 
+### Backend
 - **Java 17**: LTS version with modern language features
 - **Spring Boot 3.2.4**: Production-ready application framework
 - **Spring Security**: Authentication and authorization
@@ -31,35 +47,53 @@ This backend system provides comprehensive financial data management with three 
 - **SpringDoc OpenAPI**: API documentation
 - **Maven**: Build and dependency management
 
+### Frontend
+- **React 18**: Modern UI library with hooks
+- **Vite**: Next-generation frontend tooling
+- **React Router**: Client-side routing
+- **Axios**: HTTP client for API calls
+- **Recharts**: Composable charting library
+- **Tailwind CSS**: Utility-first CSS framework
+- **Lucide React**: Beautiful icon library
+
 ## Prerequisites
 
+### Backend
 - Java 17 or higher
 - Maven 3.8+ or higher
 - MySQL 8.0+ (for production) or H2 (for development)
+
+### Frontend
+- Node.js 16+ or higher
+- npm 8+ or yarn 1.22+
+
+### General
 - Git (for cloning the repository)
 
 ## Getting Started
+
+### Backend Setup
 
 ### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Dhiraj706Sardar/zyroovn-assignment.git
-
+cd zyroovn-assignment
 ```
 
-### 2. Build the Project
+### 2. Build the Backend
 
 ```bash
 mvn clean install
 ```
 
-### 3. Run the Application
+### 3. Run the Backend
 
 ```bash
 mvn spring-boot:run
 ```
 
-The application will start on `http://localhost:8080`
+The backend will start on `http://localhost:8080`
 
 ### 4. Configure Database
 
@@ -99,11 +133,79 @@ export SPRING_DATASOURCE_PASSWORD=your_password
 
 No configuration needed. H2 runs in-memory by default.
 
-### 5. Access the API Documentation
+### Frontend Setup
+
+### 1. Navigate to Frontend Directory
+
+```bash
+cd finance-frontend
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### 3. Configure API Endpoint
+
+Create a `.env` file in the `finance-frontend` directory:
+
+```env
+VITE_API_BASE_URL=http://localhost:8080/api
+```
+
+### 4. Run the Frontend
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+The frontend will start on `http://localhost:5173`
+
+### 5. Build for Production
+
+```bash
+npm run build
+# or
+yarn build
+```
+
+The production build will be in the `dist` folder.
+
+### 5. Access the Applications
 
 Open your browser and navigate to:
-- Swagger UI: `http://localhost:8080/swagger-ui.html`
-- H2 Console (dev only): `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:mem:financedb`)
+- **Frontend**: `http://localhost:5173`
+- **Backend API**: `http://localhost:8080`
+- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
+- **H2 Console** (dev only): `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:mem:financedb`)
+
+## 📸 Screenshots
+
+### Swagger UI - API Documentation
+![Swagger UI](screenshots/swagger-ui.png)
+
+The interactive Swagger UI provides:
+- Complete API documentation
+- Try-it-out functionality for all endpoints
+- Request/response schemas
+- Authentication support
+- Real-time API testing
+
+### Frontend Application
+![Dashboard](screenshots/dashboard.png)
+![Login Page](screenshots/login.png)
+![Financial Records](screenshots/records.png)
+
+To capture your own screenshots:
+1. Start both backend and frontend applications
+2. Navigate to the respective URLs
+3. Take screenshots and save them to the `screenshots/` directory
 
 ## Default Test Users
 
@@ -392,8 +494,21 @@ mvn clean test jacoco:report
 ## Project Structure
 
 ```
-finance-backend/
-├── src/
+finance-management-system/
+├── finance-frontend/              # React Frontend
+│   ├── src/
+│   │   ├── components/           # Reusable UI components
+│   │   ├── pages/                # Page components
+│   │   ├── context/              # React Context for state
+│   │   ├── services/             # API service layer
+│   │   ├── utils/                # Utility functions
+│   │   ├── App.jsx               # Main app component
+│   │   └── main.jsx              # Entry point
+│   ├── public/                   # Static assets
+│   ├── package.json              # Frontend dependencies
+│   ├── vite.config.js            # Vite configuration
+│   └── tailwind.config.js        # Tailwind CSS config
+├── src/                          # Backend Source
 │   ├── main/
 │   │   ├── java/com/finance/backend/
 │   │   │   ├── config/          # Configuration classes
@@ -410,8 +525,9 @@ finance-backend/
 │   │       ├── application-dev.yml
 │   │       └── data.sql
 │   └── test/                    # Test classes
-├── pom.xml
-└── README.md
+├── screenshots/                  # Application screenshots
+├── pom.xml                       # Backend dependencies
+└── README.md                     # This file
 ```
 
 ## Design Decisions
@@ -480,7 +596,9 @@ The API returns consistent error responses:
 
 ## Troubleshooting
 
-### MySQL Connection Issues
+### Backend Issues
+
+#### MySQL Connection Issues
 ```bash
 # Check MySQL is running
 sudo systemctl status mysql
@@ -492,23 +610,23 @@ mysql -u finance_user -p finance_db
 mysql --version
 ```
 
-### Port Already in Use
+#### Port Already in Use
 ```bash
 # Change port in application.yml or use environment variable
 export SERVER_PORT=8081
 mvn spring-boot:run
 ```
 
-### JWT Token Expired
+#### JWT Token Expired
 - Tokens expire after 24 hours
 - Login again to get a new token
 
-### H2 Console Not Accessible
+#### H2 Console Not Accessible
 - Ensure dev profile is active
 - Check URL: `http://localhost:8080/h2-console`
 - JDBC URL: `jdbc:h2:mem:financedb`
 
-### Database Schema Issues
+#### Database Schema Issues
 ```bash
 # For MySQL, reset database
 mysql -u finance_user -p
@@ -518,8 +636,44 @@ CREATE DATABASE finance_db;
 # Restart application with ddl-auto: create
 ```
 
+### Frontend Issues
+
+#### Port 5173 Already in Use
+```bash
+# Vite will automatically try the next available port
+# Or specify a different port in vite.config.js
+```
+
+#### API Connection Failed
+- Ensure backend is running on `http://localhost:8080`
+- Check `.env` file has correct `VITE_API_BASE_URL`
+- Check browser console for CORS errors
+
+#### Dependencies Installation Failed
+```bash
+# Clear npm cache
+npm cache clean --force
+rm -rf node_modules package-lock.json
+npm install
+
+# Or use yarn
+yarn cache clean
+rm -rf node_modules yarn.lock
+yarn install
+```
+
+#### Build Errors
+```bash
+# Ensure Node.js version is 16+
+node --version
+
+# Update dependencies
+npm update
+```
+
 ## Future Enhancements
 
+### Backend
 - Multi-currency support
 - File attachments for receipts
 - Email notifications
@@ -528,6 +682,16 @@ CREATE DATABASE finance_db;
 - Caching for dashboard queries
 - Export to CSV/PDF
 - Scheduled reports
+
+### Frontend
+- Dark mode support
+- Advanced data visualization
+- Offline support with PWA
+- Real-time notifications
+- Budget planning features
+- Recurring transactions
+- Multi-language support
+- Mobile app (React Native)
 
 ## License
 
