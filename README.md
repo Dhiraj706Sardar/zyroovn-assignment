@@ -41,8 +41,8 @@ This backend system provides comprehensive financial data management with three 
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd finance-backend
+git clone https://github.com/Dhiraj706Sardar/zyroovn-assignment.git
+
 ```
 
 ### 2. Build the Project
